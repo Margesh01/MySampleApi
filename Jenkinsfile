@@ -13,26 +13,14 @@ pipeline {
             }
         }
 
-        stage('Build & Test .NET') {
-            steps {
-                sh 'dotnet build --configuration Release'
-            }
-        }
-
-        stage('Build Docker Image') {
-            steps {
-                sh "docker build -t ${REGISTRY_USER}/${DOCKER_IMAGE}:${BUILD_NUMBER} ."
-            }
-        }
-
-        stage('Update Manifest & Push to Git') {
+        stage('Update Manifest & Push to GitOps') {
             steps {
                 sh """
                     git config user.email "jenkins@ci.com"
                     git config user.name "Jenkins CI"
                     sed -i 's|${REGISTRY_USER}/${DOCKER_IMAGE}:.*|${REGISTRY_USER}/${DOCKER_IMAGE}:${BUILD_NUMBER}|g' k8s/deployment.yaml
                     git add k8s/deployment.yaml
-                    git commit -m "Jenkins CI: Update image to tag ${BUILD_NUMBER} [skip ci]" || echo "No changes to commit"
+                    git commit -m "Jenkins CI: Update image tag to ${BUILD_NUMBER} [skip ci]" || echo "No changes to commit"
                     git push origin main
                 """
             }
