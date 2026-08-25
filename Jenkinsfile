@@ -15,14 +15,17 @@ pipeline {
 
         stage('Update Manifest & Push to GitOps') {
             steps {
-                sh """
-                    git config user.email "jenkins@ci.com"
-                    git config user.name "Jenkins CI"
-                    sed -i 's|${REGISTRY_USER}/${DOCKER_IMAGE}:.*|${REGISTRY_USER}/${DOCKER_IMAGE}:${BUILD_NUMBER}|g' k8s/deployment.yaml
-                    git add k8s/deployment.yaml
-                    git commit -m "Jenkins CI: Update image tag to ${BUILD_NUMBER} [skip ci]" || echo "No changes to commit"
-                    git push origin main
-                """
+                withCredentials([usernamePassword(credentialsId: 'github-credentials', usernameVariable: 'GIT_USER', passwordVariable: 'GIT_TOKEN')]) {
+                    sh """
+                        git config user.email "jenkins@ci.com"
+                        git config user.name "Jenkins CI"
+                        sed -i 's|${REGISTRY_USER}/${DOCKER_IMAGE}:.*|${REGISTRY_USER}/${DOCKER_IMAGE}:${BUILD_NUMBER}|g' k8s/deployment.yaml
+                        git add k8s/deployment.yaml
+                        git commit -m "Jenkins CI: Update image tag to ${BUILD_NUMBER} [skip ci]" || echo "No changes to commit"
+                        git remote set-url origin https://${GIT_USER}:${GIT_TOKEN}@github.com/Margesh01/MySampleApi.git
+                        git push origin main
+                    """
+                }
             }
         }
     }
