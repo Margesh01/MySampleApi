@@ -8,6 +8,7 @@
 
   <ItemGroup>
     <Compile Include=".gitignore" />
+    <Compile Include="Jenkinsfile" />
   </ItemGroup>
 
   <ItemGroup>
