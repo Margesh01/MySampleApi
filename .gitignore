@@ -1,0 +1,17 @@
+﻿# .NET / C# Build Outputs
+bin/
+obj/
+out/
+d3d/
+
+# Visual Studio & IDE files
+.vs/
+*.user
+*.userosscache
+*.sln.docstates
+
+# Docker & Archive Artifacts
+*.tar
+
+# Environment & Settings
+appsettings.Development.json
