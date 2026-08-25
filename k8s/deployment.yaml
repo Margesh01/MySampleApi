@@ -6,6 +6,7 @@ metadata:
     app: dotnet-api
 spec:
   replicas: 7   # <--- THIS IS WHERE YOU SET THE 4 INSTANCES!
+  revisionHistoryLimit: 3  # <--- Only keep the last 3 ReplicaSets for rollback
   selector:
     matchLabels:
       app: dotnet-api
