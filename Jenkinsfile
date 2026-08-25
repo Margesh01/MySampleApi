@@ -19,7 +19,7 @@ pipeline {
                     def imageTag = "${BUILD_NUMBER}"
                     sh "docker build -t ${DOCKER_IMAGE}:${imageTag} ."
                     
-                    withCredentials([usernamePassword(credentialsId: 'dockerhub-credentials', passwordVariable: 'DOCKER_PASS', usernameVariable: 'DOCKER_USER')]) {
+                    withCredentials([usernamePassword(credentialsId: 'docker-hub-credentials', passwordVariable: 'DOCKER_PASS', usernameVariable: 'DOCKER_USER')]) {
                         sh "echo \$DOCKER_PASS | docker login -u \$DOCKER_USER --password-stdin"
                         sh "docker push ${DOCKER_IMAGE}:${imageTag}"
                     }
