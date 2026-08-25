@@ -3,13 +3,13 @@
 
     environment {
         DOCKER_IMAGE = 'mysampleapi'
-        REGISTRY_USER = 'your-dockerhub-username' // Change this
+        REGISTRY_USER = 'margesh01' // Change this
     }
 
     stages {
         stage('Checkout Code') {
             steps {
-                git branch: 'main', url: 'https://github.com/<YOUR-GITHUB-USERNAME>/MySampleApi.git'
+                git branch: 'main', url: 'https://github.com/Margesh01/MySampleApi.git'
             }
         }
 
