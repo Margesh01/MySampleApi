@@ -13,6 +13,18 @@ pipeline {
             }
         }
 
+        stage('Build & Push Docker Image') {
+            steps {
+                withCredentials([usernamePassword(credentialsId: 'docker-hub-credentials', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
+                    sh '''
+                        echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
+                        docker build -t ${REGISTRY_USER}/${DOCKER_IMAGE}:${BUILD_NUMBER} .
+                        docker push ${REGISTRY_USER}/${DOCKER_IMAGE}:${BUILD_NUMBER}
+                    '''
+                }
+            }
+        }
+
         stage('Update Manifest & Push to GitOps') {
             steps {
                 withCredentials([usernamePassword(credentialsId: 'github-credentials', usernameVariable: 'GIT_USER', passwordVariable: 'GIT_TOKEN')]) {
@@ -20,7 +32,6 @@ pipeline {
                         git config user.email "jenkins@ci.com"
                         git config user.name "Jenkins CI"
                         
-                        # Replace any image string on the image line with the new build number
                         sed -i -E "s|(image: ).*|\\1${REGISTRY_USER}/${DOCKER_IMAGE}:${BUILD_NUMBER}|g" k8s/deployment.yaml
                         
                         git add k8s/deployment.yaml
