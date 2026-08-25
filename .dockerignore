@@ -1,0 +1,7 @@
+﻿bin/
+obj/
+.git/
+.gitignore
+Jenkinsfile
+k8s/
+README.md
