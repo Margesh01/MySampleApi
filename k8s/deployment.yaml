@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: dotnet-api-container
-        image: margesh01/mysampleapi:12
+        image: margesh01/mysampleapi:13
         imagePullPolicy: Never  # Tells Kubernetes to use your local Docker image
         ports:
         - containerPort: 8080
