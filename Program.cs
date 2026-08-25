@@ -23,4 +23,4 @@ app.MapGet("/", () => Results.Ok(new
     ServedByPod = Environment.MachineName
 }));
 
-app.Run();
+app.Run(); 
