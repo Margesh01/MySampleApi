@@ -17,11 +17,11 @@ pipeline {
             steps {
                 script {
                     def imageTag = "${BUILD_NUMBER}"
-                    bat "docker build -t ${DOCKER_IMAGE}:${imageTag} ."
+                    sh "docker build -t ${DOCKER_IMAGE}:${imageTag} ."
                     
                     withCredentials([usernamePassword(credentialsId: 'dockerhub-credentials', passwordVariable: 'DOCKER_PASS', usernameVariable: 'DOCKER_USER')]) {
-                        bat "docker login -u %DOCKER_USER% -p %DOCKER_PASS%"
-                        bat "docker push ${DOCKER_IMAGE}:${imageTag}"
+                        sh "echo \$DOCKER_PASS | docker login -u \$DOCKER_USER --password-stdin"
+                        sh "docker push ${DOCKER_IMAGE}:${imageTag}"
                     }
                 }
             }
@@ -33,16 +33,17 @@ pipeline {
                     def imageTag = "${BUILD_NUMBER}"
                     
                     withCredentials([string(credentialsId: 'github-pat', variable: 'GITHUB_TOKEN')]) {
-                        bat "git clone https://%GITHUB_TOKEN%@${GITOPS_REPO} gitops-dir"
+                        sh "git clone https://${GITHUB_TOKEN}@${GITOPS_REPO} gitops-dir"
                         
                         dir('gitops-dir') {
-                            bat "powershell -Command \"(Get-Content deployment.yaml) -replace 'image: ${DOCKER_IMAGE}:.*', 'image: ${DOCKER_IMAGE}:${imageTag}' | Set-Content deployment.yaml\""
+                            // Linux sed command to replace image tag in deployment.yaml
+                            sh "sed -i 's|image: ${DOCKER_IMAGE}:.*|image: ${DOCKER_IMAGE}:${imageTag}|g' deployment.yaml"
                             
-                            bat "git config user.email 'jenkins@ci.com'"
-                            bat "git config user.name 'Jenkins CI'"
-                            bat "git add deployment.yaml"
-                            bat "git commit -m \"Update image tag to ${imageTag} [skip ci]\""
-                            bat "git push origin main"
+                            sh "git config user.email 'jenkins@ci.com'"
+                            sh "git config user.name 'Jenkins CI'"
+                            sh "git add deployment.yaml"
+                            sh "git commit -m \"Update image tag to ${imageTag} [skip ci]\""
+                            sh "git push origin main"
                         }
                     }
                 }
@@ -51,7 +52,7 @@ pipeline {
     }
     post {
         always {
-            bat "if exist gitops-dir rmdir /s /q gitops-dir"
+            sh "rm -rf gitops-dir"
         }
     }
 }
