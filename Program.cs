@@ -19,7 +19,7 @@ app.MapControllers();
 // Maps the root URL directly to weatherforecast and returns the Pod Name
 app.MapGet("/", () => Results.Ok(new
 {
-    Message = "Hello from Kubernetes!",
+    Message = "Hello from Kubernetes!", 
     ServedByPod = Environment.MachineName
 }));
 
