@@ -5,7 +5,7 @@ metadata:
   labels:
     app: dotnet-api
 spec:
-  replicas: 2   # <--- THIS IS WHERE YOU SET THE 4 INSTANCES!
+  replicas: 4   # <--- THIS IS WHERE YOU SET THE 4 INSTANCES!
   selector:
     matchLabels:
       app: dotnet-api
